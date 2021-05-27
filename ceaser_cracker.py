@@ -24,4 +24,4 @@ def crack(string):
         print(f'{offset}: {string}')
 
 if __name__ == '__main__':
-    crack(input('What is the phrase you would like to crack:\n'))
+    crack(input('What is the phrase you would like to crack:\n').lower())

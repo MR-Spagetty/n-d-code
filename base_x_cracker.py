@@ -28,4 +28,4 @@ def crack(string):
 
 if __name__ == '__main__':
 
-    crack('72 69 1f 72 69 2a 1f 72 69 72 69')
+    crack(input('What is the phrase you would like to crack:\n').lower())
