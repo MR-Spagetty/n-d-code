@@ -389,7 +389,8 @@ try:
 except ModuleNotFoundError:
     print('tkinter module not found GUI mode has been disabled\n'
           'automatically starting in terminal mode')
-    term_start()
+    if __name__ == '__main__':
+        term_start()
 
 
 def gui_setup():
@@ -558,4 +559,5 @@ def main():
             os.system('cls' if os.name == 'nt' else 'clear')
             gui_start()
 
-main()
+if __name__ == '__main__':
+    main()
