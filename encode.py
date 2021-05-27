@@ -18,6 +18,9 @@ class tap:
         5: {1: 'v', 2: 'w', 3: 'x', 4: 'y', 5: 'z'}
     }
 
+    def crack(string):
+        return 'This method is incompatible with cracking'
+
     def enc(string):
         lc = []
         for char in string:
@@ -65,6 +68,23 @@ class base_x:
         'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
         'u', 'v', 'w', 'x', 'y', 'z'
     ]
+
+    def crack(string):
+
+        highest_val = 0
+        for char in string:
+            if char in base_x.lib:
+                current_val = base_x.lib.index(char)
+            if highest_val < current_val:
+                highest_val = current_val
+
+        minimum_base = highest_val + 1
+        for base in range(minimum_base, 37):
+            lc = []
+            l = string.split()
+            for character in l:
+                lc.append(chr(int(character, base)))
+            print(f'{base}: {"".join(lc)}')
 
     def get_base():
         not_valid = True
@@ -145,6 +165,9 @@ class phonetic:
             ' ': 'space'
             }
 
+    def crack(string):
+        return 'This method is incompatible with cracking'
+
     def enc(phrase):
         phrase = phrase
         phonetic_phrase = []
@@ -172,6 +195,9 @@ class phonetic:
 class hexi_decimal:
     needs_data = False
 
+    def crack(string):
+        return 'This method is incompatible with cracking'
+
     def enc(string):
         l = list(string)
         lc = []
@@ -192,6 +218,9 @@ class hexi_decimal:
 class ascii_id:
     needs_data = False
 
+    def crack(string):
+        return 'This method is incompatible with cracking'
+
     def dec(string):
         l = string.split(' ')
         lc = []
@@ -211,6 +240,9 @@ class ascii_id:
 
 class binary:
     needs_data = False
+
+    def crack(string):
+        return 'This method is incompatible with cracking'
 
     def dec(string):
         lc = []
@@ -243,6 +275,9 @@ class morse:
             '..---', '...--', '....-', '.....', '-....', '--...', '---..',
             '----.', '-----'
     ]
+
+    def crack(string):
+        return 'This method is incompatible with cracking'
 
     def dec(string):
         l = string.split(" ")
@@ -280,6 +315,26 @@ class ceaser:
                     'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
                     'y', 'z'
     ]
+
+    def crack(string):
+        eng = [
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+            'u', 'v', 'w', 'x', 'y', 'z'
+        ]
+
+        for offset in range(0, 26):
+            l = list(string.lower())
+            lc = []
+
+            for character in l:
+                if character in eng:
+                    char_id = ((-offset + 26 + eng.index(character) + 26) % 26)
+                    lc.append(eng[char_id])
+                else:
+                    lc.append(character)
+            string = ''.join(lc)
+            print(f'{offset}: {string}')
 
     def get_offset(enc_dec=""):
         not_valid = True
@@ -361,8 +416,8 @@ def term_start():
         cont = ''
         # finding what the user wants to encode/decode and how
         space_sererated = 'morse, hex, ascii ids, binary or base x'
-        enc_dec = input('would you like to encode or '
-                        'decode your string? ').lower().strip()
+        enc_dec = input('would you like to encode, decode or '
+                        'crack your string? ').lower().strip()
         code_type = input(f'how would you like to {enc_dec}'
                            ' your string? ').lower().strip()
         string = input(f'What is the string you would like to {enc_dec}? '
@@ -378,6 +433,11 @@ def term_start():
                 print(General.cyphs[code_type].enc(string))
             else:
                 print("ERROR CODE TYPE NOT FOUND")
+        elif enc_dec == 'crack':
+            if code_type in General.cyphs:
+                General.cyphs[code_type].crack(string)
+            else:
+                print('ERROR CODE TYPE NOT FOUND')
         while cont not in ['y', 'n']:
             cont = input('Would you like to continue (y|n) ')
     if cont == 'n':
