@@ -455,6 +455,8 @@ except ModuleNotFoundError:
 
 if not GUI_disabled:
     def gui_setup():
+        """sets up the program gui
+        """
         global gui
         gui = Tk()
         gui.title('Menu')
@@ -585,6 +587,8 @@ Extra data: {extra_data}''')
 
 
     def gui_start():
+        """starts up the gui
+        """
         global term
         term = False
         gui_setup()
