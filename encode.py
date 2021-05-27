@@ -624,5 +624,5 @@ Extra data: {extra_data}''')
                 os.system('cls' if os.name == 'nt' else 'clear')
                 gui_start()
 
-if __name__ == '__main__':
-    main()
+    if __name__ == '__main__':
+        main()
