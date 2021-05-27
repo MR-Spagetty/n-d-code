@@ -443,181 +443,182 @@ def term_start():
     if cont == 'n':
         print('have a nice day')
         exit()
-
+GUI_disabled = False
 try:
     from tkinter import *
 except ModuleNotFoundError:
     print('tkinter module not found GUI mode has been disabled\n'
           'automatically starting in terminal mode')
+    GUI_disabled = True
     if __name__ == '__main__':
         term_start()
 
+if not GUI_disabled:
+    def gui_setup():
+        global gui
+        gui = Tk()
+        gui.title('Menu')
 
-def gui_setup():
-    global gui
-    gui = Tk()
-    gui.title('Menu')
+        global in_out_gui
+        in_out_gui = Toplevel()
+        in_out_gui.title('Input/Output')
+        input_label = Label(
+                            in_out_gui, text='Input', font=('Comic Sans MS', 12))
+        input_label.pack(pady=5)
+        string_textvar = StringVar(in_out_gui)
+        input_entry = Entry(in_out_gui, textvariable=string_textvar, width=50)
+        input_entry.pack()
+        output_label = Label(
+                            in_out_gui, text='Output', font=('Comic Sans MS', 12))
+        output_label.pack(pady=5)
+        output_textvar = StringVar(in_out_gui)
+        output_entry = Entry(in_out_gui, textvariable=output_textvar, width=50)
+        output_entry.pack()
 
-    global in_out_gui
-    in_out_gui = Toplevel()
-    in_out_gui.title('Input/Output')
-    input_label = Label(
-                        in_out_gui, text='Input', font=('Comic Sans MS', 12))
-    input_label.pack(pady=5)
-    string_textvar = StringVar(in_out_gui)
-    input_entry = Entry(in_out_gui, textvariable=string_textvar, width=50)
-    input_entry.pack()
-    output_label = Label(
-                         in_out_gui, text='Output', font=('Comic Sans MS', 12))
-    output_label.pack(pady=5)
-    output_textvar = StringVar(in_out_gui)
-    output_entry = Entry(in_out_gui, textvariable=output_textvar, width=50)
-    output_entry.pack()
-
-    global is_on
-    is_on = True
-
-    def enc_dec_switch():
         global is_on
+        is_on = True
 
-        if is_on:
-            code_entry_label.config(
-                    text='How would you like to Encode your string:'
-                    )
-            is_on = False
+        def enc_dec_switch():
+            global is_on
 
-        else:
-            code_entry_label.config(
-                    text='How would you like to Decode your string:'
-                    )
-            is_on = True
+            if is_on:
+                code_entry_label.config(
+                        text='How would you like to Encode your string:'
+                        )
+                is_on = False
 
-    def update(called_by, y, action):
-        global str_code_type
-        str_code_type = StringVar.get(code_type).lower()
-        global extra_data
-        extra_data = StringVar.get(data_stringvar)
-        # print(f'"{called_by}" "{y}" "{action}"')
-        if str_code_type in General.cyphs:
-            if General.cyphs[str_code_type].needs_data:
-                prompt = General.cyphs[str_code_type].data_prompt
-                data_prompt_label.config(textvariable=StringVar(gui, prompt))
-                data_entry.config(state=NORMAL)
-                if General.cyphs[str_code_type].data_valid(extra_data):
-                    go_button.config(state=ACTIVE)
-                else:
-                    go_button.config(state=DISABLED)
             else:
+                code_entry_label.config(
+                        text='How would you like to Decode your string:'
+                        )
+                is_on = True
+
+        def update(called_by, y, action):
+            global str_code_type
+            str_code_type = StringVar.get(code_type).lower()
+            global extra_data
+            extra_data = StringVar.get(data_stringvar)
+            # print(f'"{called_by}" "{y}" "{action}"')
+            if str_code_type in General.cyphs:
+                if General.cyphs[str_code_type].needs_data:
+                    prompt = General.cyphs[str_code_type].data_prompt
+                    data_prompt_label.config(textvariable=StringVar(gui, prompt))
+                    data_entry.config(state=NORMAL)
+                    if General.cyphs[str_code_type].data_valid(extra_data):
+                        go_button.config(state=ACTIVE)
+                    else:
+                        go_button.config(state=DISABLED)
+                else:
+                    data_prompt_label.config(textvariable=no_data)
+                    data_stringvar.set('')
+                    data_entry.config(state=DISABLED)
+                    go_button.config(state=ACTIVE)
+
+            else:
+                go_button.config(state=DISABLED)
                 data_prompt_label.config(textvariable=no_data)
                 data_stringvar.set('')
                 data_entry.config(state=DISABLED)
-                go_button.config(state=ACTIVE)
 
-        else:
-            go_button.config(state=DISABLED)
-            data_prompt_label.config(textvariable=no_data)
-            data_stringvar.set('')
-            data_entry.config(state=DISABLED)
-
-    def go():
-        global extra_data
-        global str_code_type
-        global is_on
-        if is_on:
-            mode = 'Decode'
-            try:
-                output_textvar.set(
-                    General.cyphs[str_code_type].dec(StringVar.get(string_textvar))
-                    )
-            except:
-                print('errored')
-        else:
-            mode = 'Encode'
-            try:
-                output_textvar.set(
-                    General.cyphs[str_code_type].enc(StringVar.get(string_textvar))
-                    )
-            except:
-                print('errored')
-        print(f'''
+        def go():
+            global extra_data
+            global str_code_type
+            global is_on
+            if is_on:
+                mode = 'Decode'
+                try:
+                    output_textvar.set(
+                        General.cyphs[str_code_type].dec(StringVar.get(string_textvar))
+                        )
+                except:
+                    print('errored')
+            else:
+                mode = 'Encode'
+                try:
+                    output_textvar.set(
+                        General.cyphs[str_code_type].enc(StringVar.get(string_textvar))
+                        )
+                except:
+                    print('errored')
+            print(f'''
 Mode: {mode}
 Code method: {str_code_type}
 Extra data: {extra_data}''')
 
-    # Button to change mode between encode and decode
-    on_enc_dec_button = Button(gui, textvariable=StringVar(gui,
-                                                           value='Change mode'
-                                                           ),
-                               command=enc_dec_switch,
-                               font=("Comic Sans MS", 12))
-    on_enc_dec_button.pack(pady=10)
+        # Button to change mode between encode and decode
+        on_enc_dec_button = Button(gui, textvariable=StringVar(gui,
+                                                            value='Change mode'
+                                                            ),
+                                command=enc_dec_switch,
+                                font=("Comic Sans MS", 12))
+        on_enc_dec_button.pack(pady=10)
 
-    # Label and text entry field for the code type
-    code_entry_label = Label(gui,
-                             text='How would you like to Decode your string:',
-                             font=("Comic Sans MS", 12))
-    code_entry_label.pack(pady=10)
-    code_type = StringVar(gui, 'none')
-    code_type.trace_add('write', update)
-    code_menu_button = Menubutton(gui, textvariable=code_type, font=('Comic Sans MS', 10))
-    code_menu_button.pack(pady=5)
-    code_menu = Menu(code_menu_button, font=('Comic Sans MS', 10))
-    code_menu_button['menu'] = code_menu
-    for type in General.list_of_methods.split():
-        code_menu.add_radiobutton(label=type.lower(), variable=code_type)
+        # Label and text entry field for the code type
+        code_entry_label = Label(gui,
+                                text='How would you like to Decode your string:',
+                                font=("Comic Sans MS", 12))
+        code_entry_label.pack(pady=10)
+        code_type = StringVar(gui, 'none')
+        code_type.trace_add('write', update)
+        code_menu_button = Menubutton(gui, textvariable=code_type, font=('Comic Sans MS', 10))
+        code_menu_button.pack(pady=5)
+        code_menu = Menu(code_menu_button, font=('Comic Sans MS', 10))
+        code_menu_button['menu'] = code_menu
+        for type in General.list_of_methods.split():
+            code_menu.add_radiobutton(label=type.lower(), variable=code_type)
 
-    # Label and entry box for inputing of any extra data required by the
-    # specific method eg the offset of the ceaser cypher
-    no_data = StringVar(gui, 'no extra data needed')
-    data_prompt_label = Label(gui,
-                              textvariable=no_data,
-                              font=('Comic Sans MS', 12))
-    data_prompt_label.pack(pady=10)
-    data_stringvar = StringVar(gui)
-    data_stringvar.trace_add('write', update)
-    data_entry = Entry(gui, textvariable=data_stringvar, state=DISABLED)
-    data_entry.pack(pady=5)
+        # Label and entry box for inputing of any extra data required by the
+        # specific method eg the offset of the ceaser cypher
+        no_data = StringVar(gui, 'no extra data needed')
+        data_prompt_label = Label(gui,
+                                textvariable=no_data,
+                                font=('Comic Sans MS', 12))
+        data_prompt_label.pack(pady=10)
+        data_stringvar = StringVar(gui)
+        data_stringvar.trace_add('write', update)
+        data_entry = Entry(gui, textvariable=data_stringvar, state=DISABLED)
+        data_entry.pack(pady=5)
 
-    # The infamos GO button
-    go_button = Button(gui, text='GO', state=DISABLED, command=go)
-    go_button.pack(pady=20)
-
-
-def gui_start():
-    global term
-    term = False
-    gui_setup()
-    gui.mainloop()
+        # The infamos GO button
+        go_button = Button(gui, text='GO', state=DISABLED, command=go)
+        go_button.pack(pady=20)
 
 
-def main():
-    """Main program function"""
-    # asking the user weather or no they want to run the program
-    not_valid = True
-    while not_valid:
-        not_valid = False
-        print('Launch Program (y|n)')
-        launch = input('>> ').strip().lower()
-        if launch not in ['y', 'n']:
-            print('ERROR input invalid valid inputs are "y" and "n"')
-            not_valid = True
-        elif launch == 'n':
-            print('Have a nice day')
-            exit()
-    # asking the user weather they would like to run the program in
-    # terminal or GUI mode
-    not_valid = True
-    while not_valid:
-        print('launch in terminal or GUI mode? ')
-        mode = input('>> ').strip().lower()
-        if mode in ['terminal', 'gui']:
+    def gui_start():
+        global term
+        term = False
+        gui_setup()
+        gui.mainloop()
+
+
+    def main():
+        """Main program function"""
+        # asking the user weather or no they want to run the program
+        not_valid = True
+        while not_valid:
             not_valid = False
-        if mode == 'terminal':
-            os.system('cls' if os.name == 'nt' else 'clear')
-            term_start()
-        elif mode == 'gui':
-            os.system('cls' if os.name == 'nt' else 'clear')
-            gui_start()
+            print('Launch Program (y|n)')
+            launch = input('>> ').strip().lower()
+            if launch not in ['y', 'n']:
+                print('ERROR input invalid valid inputs are "y" and "n"')
+                not_valid = True
+            elif launch == 'n':
+                print('Have a nice day')
+                exit()
+        # asking the user weather they would like to run the program in
+        # terminal or GUI mode
+        not_valid = True
+        while not_valid:
+            print('launch in terminal or GUI mode? ')
+            mode = input('>> ').strip().lower()
+            if mode in ['terminal', 'gui']:
+                not_valid = False
+            if mode == 'terminal':
+                os.system('cls' if os.name == 'nt' else 'clear')
+                term_start()
+            elif mode == 'gui':
+                os.system('cls' if os.name == 'nt' else 'clear')
+                gui_start()
 
 if __name__ == '__main__':
     main()
