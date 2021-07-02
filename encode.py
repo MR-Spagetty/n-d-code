@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # encode.py
-# By Eddie
+# By MR-Spagetty
 # project started 20/02/2020
 
 import os
@@ -35,8 +35,8 @@ class tap:
 
     def dec(string):
         lc = []
-        l = string.split()
-        for char_id in l:
+        string_list = string.split()
+        for char_id in string_list:
             char = tap.matrix[int(char_id[0])][int(char_id[1])]
             if char == 'ij':
                 lc.append('_i/j_')
@@ -55,7 +55,7 @@ class base_x:
         valid = True
         try:
             data_int = int(data)
-        except:
+        except ValueError:
             valid = False
         finally:
             if valid:
@@ -81,8 +81,8 @@ class base_x:
         minimum_base = highest_val + 1
         for base in range(minimum_base, 37):
             lc = []
-            l = string.split()
-            for character in l:
+            string_list = string.split()
+            for character in string_list:
                 lc.append(chr(int(character, base)))
             print(f'{base}: {"".join(lc)}')
 
@@ -110,9 +110,9 @@ class base_x:
         else:
             global extra_data
             base = int(extra_data)
-        l = list(text)
+        string_list = list(text)
         lc = []
-        for char in l:
+        for char in string_list:
             char_num = ord(char)
             num = []
             while char_num:
@@ -131,8 +131,8 @@ class base_x:
             global extra_data
             base = int(extra_data)
         lc = []
-        l = string.split()
-        for character in l:
+        string_list = string.split()
+        for character in string_list:
             lc.append(chr(int(character, base)))
         return ''.join(lc)
 
@@ -199,17 +199,17 @@ class hexi_decimal:
         return 'This method is incompatible with cracking'
 
     def enc(string):
-        l = list(string)
+        string_list = list(string)
         lc = []
-        for char in l:
+        for char in string_list:
             lc.append(hex(ord(char)).strip('0x'))
         string = ' '.join(lc)
         return string
 
     def dec(string):
-        l = string.split(' ')
+        string_list = string.split(' ')
         lc = []
-        for char in l:
+        for char in string_list:
             lc.append(chr(int(char, 16)))
         string = ''.join(lc)
         return string
@@ -222,17 +222,17 @@ class ascii_id:
         return 'This method is incompatible with cracking'
 
     def dec(string):
-        l = string.split(' ')
+        string_list = string.split(' ')
         lc = []
-        for char in l:
+        for char in string_list:
             lc.append(chr(int(char)))
         string = ''.join(lc)
         return string
 
     def enc(string):
-        l = list(ascii(string))
+        string_list = list(ascii(string))
         lc = []
-        for char in l:
+        for char in string_list:
             lc.append(str(ord(char)))
         string = ' '.join(lc)
         return string
@@ -247,18 +247,18 @@ class binary:
     def dec(string):
         lc = []
         coded = True
-        l = string.split()
+        string_list = string.split()
         while coded:
-            for character in l:
+            for character in string_list:
                 lc.append(chr(int(character, 2)))
             string = ''.join(lc)
             coded = False
         return string
 
     def enc(string):
-        l = list(string)
+        string_list = list(string)
         lc = []
-        for character in l:
+        for character in string_list:
             binary = bin(ord(character))[2:]
             binary = (8-len(binary))*'0'+binary
             lc.append(binary)
@@ -280,17 +280,17 @@ class morse:
         return 'This method is incompatible with cracking'
 
     def dec(string):
-        l = string.split(" ")
+        string_list = string.split(" ")
         lc = []
-        for character in l:
+        for character in string_list:
             lc.append(General.eng[morse.lib.index(character)])
         string = ''.join(lc)
         return string
 
     def enc(string):
-        l = list(string.lower())
+        string_list = list(string.lower())
         lc = []
-        for character in l:
+        for character in string_list:
             if character == ' ':
                 lc.append('')
             else:
@@ -307,7 +307,7 @@ class ceaser:
         valid = True
         try:
             int(data)
-        except:
+        except ValueError:
             valid = FALSE
         return valid
     ceaser_lib = [
@@ -324,10 +324,10 @@ class ceaser:
         ]
 
         for offset in range(0, 26):
-            l = list(string.lower())
+            string_list = list(string.lower())
             lc = []
 
-            for character in l:
+            for character in string_list:
                 if character in eng:
                     char_id = ((-offset + 26 + eng.index(character) + 26) % 26)
                     lc.append(eng[char_id])
@@ -356,21 +356,21 @@ class ceaser:
         return offset
 
     def dec(string):
-        l = list(string.lower())
+        string_list = list(string.lower())
         lc = []
         if term:
             offset = ceaser.get_offset("dec")
         else:
             global extra_data
             offset = int(extra_data)
-        for character in l:
+        for character in string_list:
             char_id = ((-offset + 26 + General.eng.index(character) + 26) % 26)
             lc.append(ceaser.ceaser_lib[char_id])
         string = ''.join(lc)
         return string
 
     def enc(string):
-        l = list(string.lower())
+        string_list = list(string.lower())
         lc = []
         global term
         if term:
@@ -378,7 +378,7 @@ class ceaser:
         else:
             global extra_data
             offset = int(extra_data)
-        for character in l:
+        for character in string_list:
             if character in ceaser.ceaser_lib:
                 char_id = ((offset + General.eng.index(character) + 26) % 26)
                 lc.append(ceaser.ceaser_lib[char_id])
@@ -392,12 +392,12 @@ class General:
     cyphs = {
         'binary': binary, 'morse': morse, 'ceaser': ceaser,
         'hex': hexi_decimal, 'ascii': ascii_id, 'phonetic': phonetic,
-        'base-x': base_x, 'tap': tap # add more here all strings must be
+        'base-x': base_x, 'tap': tap  # add more here all strings must be
         # full lower case
     }
     list_of_methods = '\n'.join([
         'Binary', 'Morse', 'Ceaser', 'Hex', 'Ascii', 'Phonetic', 'Base-X',
-        'Tap' # add more here formating doesn't matter
+        'Tap'  # add more here formating doesn't matter
     ])
     eng = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -419,10 +419,10 @@ def term_start():
         enc_dec = input('would you like to encode, decode or '
                         'crack your string? ').lower().strip()
         code_type = input(f'how would you like to {enc_dec}'
-                           ' your string? ').lower().strip()
+                          ' your string? ').lower().strip()
         string = input(f'What is the string you would like to {enc_dec}? '
                        f'(if you are decoding {space_sererated} '
-                        'please separate letters with spaces) ')
+                       'please separate letters with spaces) ')
         if enc_dec == "decode":
             if code_type in General.cyphs:
                 print(General.cyphs[code_type].dec(string))
@@ -443,6 +443,8 @@ def term_start():
     if cont == 'n':
         print('have a nice day')
         exit()
+
+
 GUI_disabled = False
 try:
     from tkinter import *
@@ -465,13 +467,15 @@ if not GUI_disabled:
         in_out_gui = Toplevel()
         in_out_gui.title('Input/Output')
         input_label = Label(
-                            in_out_gui, text='Input', font=('Comic Sans MS', 12))
+                            in_out_gui, text='Input',
+                            font=('Comic Sans MS', 12))
         input_label.pack(pady=5)
         string_textvar = StringVar(in_out_gui)
         input_entry = Entry(in_out_gui, textvariable=string_textvar, width=50)
         input_entry.pack()
         output_label = Label(
-                            in_out_gui, text='Output', font=('Comic Sans MS', 12))
+                            in_out_gui, text='Output',
+                            font=('Comic Sans MS', 12))
         output_label.pack(pady=5)
         output_textvar = StringVar(in_out_gui)
         output_entry = Entry(in_out_gui, textvariable=output_textvar, width=50)
@@ -504,7 +508,8 @@ if not GUI_disabled:
             if str_code_type in General.cyphs:
                 if General.cyphs[str_code_type].needs_data:
                     prompt = General.cyphs[str_code_type].data_prompt
-                    data_prompt_label.config(textvariable=StringVar(gui, prompt))
+                    data_prompt_label.config(textvariable=StringVar(gui,
+                                                                    prompt))
                     data_entry.config(state=NORMAL)
                     if General.cyphs[str_code_type].data_valid(extra_data):
                         go_button.config(state=ACTIVE)
@@ -528,41 +533,39 @@ if not GUI_disabled:
             global is_on
             if is_on:
                 mode = 'Decode'
-                try:
-                    output_textvar.set(
-                        General.cyphs[str_code_type].dec(StringVar.get(string_textvar))
-                        )
-                except:
-                    print('errored')
+                output_textvar.set(
+                    General.cyphs[str_code_type].dec(StringVar.get(
+                        string_textvar))
+                    )
             else:
                 mode = 'Encode'
-                try:
-                    output_textvar.set(
-                        General.cyphs[str_code_type].enc(StringVar.get(string_textvar))
-                        )
-                except:
-                    print('errored')
+                output_textvar.set(
+                    General.cyphs[str_code_type].enc(StringVar.get(
+                        string_textvar))
+                    )
             print(f'''
 Mode: {mode}
 Code method: {str_code_type}
 Extra data: {extra_data}''')
 
         # Button to change mode between encode and decode
-        on_enc_dec_button = Button(gui, textvariable=StringVar(gui,
-                                                            value='Change mode'
-                                                            ),
-                                command=enc_dec_switch,
-                                font=("Comic Sans MS", 12))
+        on_enc_dec_button = Button(gui,
+                                   textvariable=StringVar(gui,
+                                                          value='Change mode'),
+                                   command=enc_dec_switch,
+                                   font=("Comic Sans MS", 12))
         on_enc_dec_button.pack(pady=10)
 
         # Label and text entry field for the code type
-        code_entry_label = Label(gui,
-                                text='How would you like to Decode your string:',
-                                font=("Comic Sans MS", 12))
+        code_entry_label = Label(
+            gui,
+            text='How would you like to Decode your string:',
+            font=("Comic Sans MS", 12))
         code_entry_label.pack(pady=10)
         code_type = StringVar(gui, 'none')
         code_type.trace_add('write', update)
-        code_menu_button = Menubutton(gui, textvariable=code_type, font=('Comic Sans MS', 10))
+        code_menu_button = Menubutton(gui, textvariable=code_type,
+                                      font=('Comic Sans MS', 10))
         code_menu_button.pack(pady=5)
         code_menu = Menu(code_menu_button, font=('Comic Sans MS', 10))
         code_menu_button['menu'] = code_menu
@@ -573,8 +576,8 @@ Extra data: {extra_data}''')
         # specific method eg the offset of the ceaser cypher
         no_data = StringVar(gui, 'no extra data needed')
         data_prompt_label = Label(gui,
-                                textvariable=no_data,
-                                font=('Comic Sans MS', 12))
+                                  textvariable=no_data,
+                                  font=('Comic Sans MS', 12))
         data_prompt_label.pack(pady=10)
         data_stringvar = StringVar(gui)
         data_stringvar.trace_add('write', update)
@@ -585,7 +588,6 @@ Extra data: {extra_data}''')
         go_button = Button(gui, text='GO', state=DISABLED, command=go)
         go_button.pack(pady=20)
 
-
     def gui_start():
         """starts up the gui
         """
@@ -593,7 +595,6 @@ Extra data: {extra_data}''')
         term = False
         gui_setup()
         gui.mainloop()
-
 
     def main():
         """Main program function"""
