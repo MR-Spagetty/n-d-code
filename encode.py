@@ -529,6 +529,9 @@ if not GUI_disabled:
         global in_out_gui
         in_out_gui = Toplevel()
         in_out_gui.title('Input/Output')
+
+        in_out_gui.protocol("WM_DELETE_WINDOW", lambda: False)
+
         input_label = Label(
                             in_out_gui, text='Input',
                             font=('Comic Sans MS', 12))
