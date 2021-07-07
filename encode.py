@@ -310,6 +310,7 @@ class ceaser:
         except ValueError:
             valid = FALSE
         return valid
+
     ceaser_lib = [
                     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
                     'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
@@ -358,6 +359,7 @@ class ceaser:
     def dec(string):
         string_list = list(string.lower())
         lc = []
+        global term
         if term:
             offset = ceaser.get_offset("dec")
         else:
@@ -388,16 +390,77 @@ class ceaser:
         return string
 
 
+class BasicKeyed:
+    needs_data = True
+    data_prompt = 'What is the passphrase: '
+
+    def data_valid(data):
+        return True
+
+    def get_keyed(passphrase):
+        alphabet_list = []
+        for char in passphrase:
+            if char not in alphabet_list and char in General.eng:
+                alphabet_list.append(char)
+        for char in General.eng:
+            if char not in alphabet_list:
+                alphabet_list.append(char)
+        return alphabet_list
+
+    def crack(string):
+        return 'This method is incompatible with cracking'
+
+    def enc(string):
+        string_list = list(string)
+        codded_list = []
+        global term
+        if term:
+            passphrase = input('What is the passphrase: ')
+        else:
+            global extra_data
+            passphrase = extra_data
+        keyed_alpha = BasicKeyed.get_keyed(passphrase)
+
+        for char in string_list:
+            if char in General.eng:
+                codded_list.append(keyed_alpha[General.eng.index(char)])
+            else:
+                codded_list.append(char)
+        string = ''.join(codded_list)
+
+        return string
+
+    def dec(string):
+        string_list = list(string)
+        codded_list = []
+        global term
+        if term:
+            passphrase = input('What is the passphrase: ')
+        else:
+            global extra_data
+            passphrase = extra_data
+        keyed_alpha = BasicKeyed.get_keyed(passphrase)
+
+        for char in string_list:
+            if char in General.eng:
+                codded_list.append(General.eng[keyed_alpha.index(char)])
+            else:
+                codded_list.append(char)
+        string = ''.join(codded_list)
+
+        return string
+
+
 class General:
     cyphs = {
         'binary': binary, 'morse': morse, 'ceaser': ceaser,
         'hex': hexi_decimal, 'ascii': ascii_id, 'phonetic': phonetic,
-        'base-x': base_x, 'tap': tap  # add more here all strings must be
-        # full lower case
+        'base-x': base_x, 'tap': tap, 'basic-keyed': BasicKeyed  # add more
+        # here all strings must be full lower case
     }
     list_of_methods = '\n'.join([
         'Binary', 'Morse', 'Ceaser', 'Hex', 'Ascii', 'Phonetic', 'Base-X',
-        'Tap'  # add more here formating doesn't matter
+        'Tap', 'Basic-Keyed'  # add more here formating doesn't matter
     ])
     eng = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
