@@ -366,8 +366,11 @@ class ceaser:
             global extra_data
             offset = int(extra_data)
         for character in string_list:
-            char_id = ((-offset + 26 + General.eng.index(character) + 26) % 26)
-            lc.append(ceaser.ceaser_lib[char_id])
+            if character in ceaser.ceaser_lib:
+                char_id = ((-offset + 26 + General.eng.index(character) + 26) % 26)
+                lc.append(ceaser.ceaser_lib[char_id])
+            else:
+                lc.append(character)
         string = ''.join(lc)
         return string
 
@@ -451,16 +454,107 @@ class BasicKeyed:
         return string
 
 
+class vigenere:
+    needs_data = True
+    data_prompt = 'What is the passphrase: '
+
+    vigenere_lib = [
+                    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+                    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+                    'y', 'z'
+    ]
+
+    def data_valid(data):
+        return str.isalpha(data)
+
+    def crack(string):
+        return 'This method is incompatible with cracking'
+
+    def enc(string):
+        string_list = list(string.lower())
+        codded_list = []
+        poly_matrix = []
+        poly_matrix_ids = []
+        global term
+        if term:
+            passphrase = input(vigenere.data_prompt)
+        else:
+            global extra_data
+            passphrase = extra_data
+
+        ids = range(0, len(passphrase))
+        current_id = 0
+        for char in string_list:
+            if char in vigenere.vigenere_lib:
+                poly_matrix.append(char)
+                poly_matrix_ids.append(current_id)
+                current_id += 1
+                if current_id >= len(passphrase):
+                    current_id = 0
+            else:
+                poly_matrix.append(char)
+                poly_matrix_ids.append(-1)
+
+        for char, id in zip(poly_matrix, poly_matrix_ids):
+            if id == -1:
+                codded_list.append(char)
+            else:
+                offset = vigenere.vigenere_lib.index(passphrase[id])
+                char_pos = vigenere.vigenere_lib.index(char)
+                new_char = vigenere.vigenere_lib[
+                    (char_pos + offset) % 26]
+                codded_list.append(new_char)
+        return ''.join(codded_list)
+
+    def dec(string):
+        string_list = list(string.lower())
+        codded_list = []
+        poly_matrix = []
+        poly_matrix_ids = []
+        global term
+        if term:
+            passphrase = input(vigenere.data_prompt)
+        else:
+            global extra_data
+            passphrase = extra_data
+
+        ids = range(0, len(passphrase))
+        current_id = 0
+        for char in string_list:
+            if char in vigenere.vigenere_lib:
+                poly_matrix.append(char)
+                poly_matrix_ids.append(current_id)
+                current_id += 1
+                if current_id >= len(passphrase):
+                    current_id = 0
+            else:
+                poly_matrix.append(char)
+                poly_matrix_ids.append(-1)
+
+        for char, id in zip(poly_matrix, poly_matrix_ids):
+            if id == -1:
+                codded_list.append(char)
+            else:
+                offset = vigenere.vigenere_lib.index(passphrase[id])
+                char_pos = vigenere.vigenere_lib.index(char)
+                new_char = vigenere.vigenere_lib[
+                    (char_pos + 26 - offset) % 26]
+                codded_list.append(new_char)
+        return ''.join(codded_list)
+
+
 class General:
     cyphs = {
         'binary': binary, 'morse': morse, 'ceaser': ceaser,
         'hex': hexi_decimal, 'ascii': ascii_id, 'phonetic': phonetic,
-        'base-x': base_x, 'tap': tap, 'basic-keyed': BasicKeyed  # add more
-        # here all strings must be full lower case
+        'base-x': base_x, 'tap': tap, 'basic-keyed': BasicKeyed,
+        'vigenere': vigenere
+        # add more here all strings must be full lower case
     }
     list_of_methods = '\n'.join([
         'Binary', 'Morse', 'Ceaser', 'Hex', 'Ascii', 'Phonetic', 'Base-X',
-        'Tap', 'Basic-Keyed'  # add more here formating doesn't matter
+        'Tap', 'Basic-Keyed', 'Vigenere'
+        # add more here formating doesn't matter
     ])
     eng = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -470,9 +564,9 @@ class General:
 
 
 def term_start():
+    """Function to run the program in terminal mode"""
     global term
     term = True
-    """Function to run the program in terminal mode"""
 
     cont = "y"
     while cont == "y":
