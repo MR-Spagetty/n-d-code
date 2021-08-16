@@ -418,7 +418,7 @@ class BasicKeyed:
         codded_list = []
         global term
         if term:
-            passphrase = input('What is the passphrase: ')
+            passphrase = input('What is the passphrase: ').strip()
         else:
             global extra_data
             passphrase = extra_data
@@ -438,7 +438,7 @@ class BasicKeyed:
         codded_list = []
         global term
         if term:
-            passphrase = input('What is the passphrase: ')
+            passphrase = input('What is the passphrase: ').strip()
         else:
             global extra_data
             passphrase = extra_data
@@ -477,7 +477,7 @@ class vigenere:
         poly_matrix_ids = []
         global term
         if term:
-            passphrase = input(vigenere.data_prompt)
+            passphrase = input(vigenere.data_prompt).strip()
         else:
             global extra_data
             passphrase = extra_data
@@ -513,7 +513,7 @@ class vigenere:
         poly_matrix_ids = []
         global term
         if term:
-            passphrase = input(vigenere.data_prompt)
+            passphrase = input(vigenere.data_prompt).strip()
         else:
             global extra_data
             passphrase = extra_data
@@ -543,17 +543,106 @@ class vigenere:
         return ''.join(codded_list)
 
 
+class gronsfeld:
+    needs_data = True
+    data_prompt = 'What is the passnumber: '
+
+    gronsfeld_lib = [
+                    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+                    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+                    'y', 'z'
+    ]
+
+    def data_valid(data):
+        return str.isnumeric(data)
+
+    def crack(string):
+        return 'This method is incompatible with cracking'
+
+    def enc(string):
+        string_list = list(string.lower())
+        codded_list = []
+        poly_matrix = []
+        poly_matrix_ids = []
+        global term
+        if term:
+            passphrase = list(input(gronsfeld.data_prompt).strip())
+        else:
+            global extra_data
+            passphrase = extra_data
+
+        ids = range(0, len(passphrase))
+        current_id = 0
+        for char in string_list:
+            if char in gronsfeld.gronsfeld_lib:
+                poly_matrix.append(char)
+                poly_matrix_ids.append(current_id)
+                current_id += 1
+                if current_id >= len(passphrase):
+                    current_id = 0
+            else:
+                poly_matrix.append(char)
+                poly_matrix_ids.append(-1)
+
+        for char, id in zip(poly_matrix, poly_matrix_ids):
+            if id == -1:
+                codded_list.append(char)
+            else:
+                offset = int(passphrase[id])
+                char_pos = gronsfeld.gronsfeld_lib.index(char)
+                new_char = gronsfeld.gronsfeld_lib[
+                    (char_pos + offset) % 26]
+                codded_list.append(new_char)
+        return ''.join(codded_list)
+
+    def dec(string):
+        string_list = list(string.lower())
+        codded_list = []
+        poly_matrix = []
+        poly_matrix_ids = []
+        global term
+        if term:
+            passphrase = list(input(gronsfeld.data_prompt).strip())
+        else:
+            global extra_data
+            passphrase = extra_data
+
+        ids = range(0, len(passphrase))
+        current_id = 0
+        for char in string_list:
+            if char in gronsfeld.gronsfeld_lib:
+                poly_matrix.append(char)
+                poly_matrix_ids.append(current_id)
+                current_id += 1
+                if current_id >= len(passphrase):
+                    current_id = 0
+            else:
+                poly_matrix.append(char)
+                poly_matrix_ids.append(-1)
+
+        for char, id in zip(poly_matrix, poly_matrix_ids):
+            if id == -1:
+                codded_list.append(char)
+            else:
+                offset = int(passphrase[id])
+                char_pos = gronsfeld.gronsfeld_lib.index(char)
+                new_char = gronsfeld.gronsfeld_lib[
+                    (char_pos + 26 - offset) % 26]
+                codded_list.append(new_char)
+        return ''.join(codded_list)
+
+
 class General:
     cyphs = {
         'binary': binary, 'morse': morse, 'ceaser': ceaser,
         'hex': hexi_decimal, 'ascii': ascii_id, 'phonetic': phonetic,
         'base-x': base_x, 'tap': tap, 'basic-keyed': BasicKeyed,
-        'vigenere': vigenere
+        'vigenere': vigenere, 'gronsfeld': gronsfeld
         # add more here all strings must be full lower case
     }
     list_of_methods = '\n'.join([
         'Binary', 'Morse', 'Ceaser', 'Hex', 'Ascii', 'Phonetic', 'Base-X',
-        'Tap', 'Basic-Keyed', 'Vigenere'
+        'Tap', 'Basic-Keyed', 'Vigenere', 'Gronsfeld'
         # add more here formating doesn't matter
     ])
     eng = [
