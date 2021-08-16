@@ -367,7 +367,8 @@ class ceaser:
             offset = int(extra_data)
         for character in string_list:
             if character in ceaser.ceaser_lib:
-                char_id = ((-offset + 26 + General.eng.index(character) + 26) % 26)
+                char_id = ((-offset + 26 + General.eng.index(character) + 26)
+                           % 26)
                 lc.append(ceaser.ceaser_lib[char_id])
             else:
                 lc.append(character)
