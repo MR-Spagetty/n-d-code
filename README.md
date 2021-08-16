@@ -13,3 +13,4 @@ Currently included methods are(in the format you would input them case does not 
 * Morse
 * Phonetic
 * Vigenere
+* Gronsfeld
