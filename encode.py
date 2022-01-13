@@ -75,15 +75,11 @@ class base_x:
         for char in string:
             if char in base_x.lib:
                 current_val = base_x.lib.index(char)
-            if highest_val < current_val:
-                highest_val = current_val
-
+            highest_val = max(highest_val, current_val)
         minimum_base = highest_val + 1
         for base in range(minimum_base, 37):
-            lc = []
             string_list = string.split()
-            for character in string_list:
-                lc.append(chr(int(character, base)))
+            lc = [chr(int(character, base)) for character in string_list]
             print(f'{base}: {"".join(lc)}')
 
     def get_base():
@@ -130,10 +126,8 @@ class base_x:
         else:
             global extra_data
             base = int(extra_data)
-        lc = []
         string_list = string.split()
-        for character in string_list:
-            lc.append(chr(int(character, base)))
+        lc = [chr(int(character, base)) for character in string_list]
         return ''.join(lc)
 
 
@@ -200,17 +194,13 @@ class hexi_decimal:
 
     def enc(string):
         string_list = list(string)
-        lc = []
-        for char in string_list:
-            lc.append(hex(ord(char)).strip('0x'))
+        lc = [hex(ord(char)).strip('0x') for char in string_list]
         string = ' '.join(lc)
         return string
 
     def dec(string):
         string_list = string.split(' ')
-        lc = []
-        for char in string_list:
-            lc.append(chr(int(char, 16)))
+        lc = [chr(int(char, 16)) for char in string_list]
         string = ''.join(lc)
         return string
 
@@ -223,17 +213,13 @@ class ascii_id:
 
     def dec(string):
         string_list = string.split(' ')
-        lc = []
-        for char in string_list:
-            lc.append(chr(int(char)))
+        lc = [chr(int(char)) for char in string_list]
         string = ''.join(lc)
         return string
 
     def enc(string):
         string_list = list(ascii(string))
-        lc = []
-        for char in string_list:
-            lc.append(str(ord(char)))
+        lc = [str(ord(char)) for char in string_list]
         string = ' '.join(lc)
         return string
 
@@ -281,9 +267,8 @@ class morse:
 
     def dec(string):
         string_list = string.split(" ")
-        lc = []
-        for character in string_list:
-            lc.append(General.eng[morse.lib.index(character)])
+        lc = [General.eng[morse.lib.index(character)]
+              for character in string_list]
         string = ''.join(lc)
         return string
 
@@ -324,7 +309,7 @@ class ceaser:
             'u', 'v', 'w', 'x', 'y', 'z'
         ]
 
-        for offset in range(0, 26):
+        for offset in range(26):
             string_list = list(string.lower())
             lc = []
 
@@ -483,19 +468,18 @@ class vigenere:
             global extra_data
             passphrase = extra_data
 
-        ids = range(0, len(passphrase))
+        ids = range(len(passphrase))
         current_id = 0
         for char in string_list:
             if char in vigenere.vigenere_lib:
-                poly_matrix.append(char)
                 poly_matrix_ids.append(current_id)
                 current_id += 1
                 if current_id >= len(passphrase):
                     current_id = 0
             else:
-                poly_matrix.append(char)
                 poly_matrix_ids.append(-1)
 
+            poly_matrix.append(char)
         for char, id in zip(poly_matrix, poly_matrix_ids):
             if id == -1:
                 codded_list.append(char)
@@ -519,19 +503,18 @@ class vigenere:
             global extra_data
             passphrase = extra_data
 
-        ids = range(0, len(passphrase))
+        ids = range(len(passphrase))
         current_id = 0
         for char in string_list:
             if char in vigenere.vigenere_lib:
-                poly_matrix.append(char)
                 poly_matrix_ids.append(current_id)
                 current_id += 1
                 if current_id >= len(passphrase):
                     current_id = 0
             else:
-                poly_matrix.append(char)
                 poly_matrix_ids.append(-1)
 
+            poly_matrix.append(char)
         for char, id in zip(poly_matrix, poly_matrix_ids):
             if id == -1:
                 codded_list.append(char)
@@ -572,19 +555,18 @@ class gronsfeld:
             global extra_data
             passphrase = extra_data
 
-        ids = range(0, len(passphrase))
+        ids = range(len(passphrase))
         current_id = 0
         for char in string_list:
             if char in gronsfeld.gronsfeld_lib:
-                poly_matrix.append(char)
                 poly_matrix_ids.append(current_id)
                 current_id += 1
                 if current_id >= len(passphrase):
                     current_id = 0
             else:
-                poly_matrix.append(char)
                 poly_matrix_ids.append(-1)
 
+            poly_matrix.append(char)
         for char, id in zip(poly_matrix, poly_matrix_ids):
             if id == -1:
                 codded_list.append(char)
@@ -608,19 +590,18 @@ class gronsfeld:
             global extra_data
             passphrase = extra_data
 
-        ids = range(0, len(passphrase))
+        ids = range(len(passphrase))
         current_id = 0
         for char in string_list:
             if char in gronsfeld.gronsfeld_lib:
-                poly_matrix.append(char)
                 poly_matrix_ids.append(current_id)
                 current_id += 1
                 if current_id >= len(passphrase):
                     current_id = 0
             else:
-                poly_matrix.append(char)
                 poly_matrix_ids.append(-1)
 
+            poly_matrix.append(char)
         for char, id in zip(poly_matrix, poly_matrix_ids):
             if id == -1:
                 codded_list.append(char)
@@ -633,18 +614,75 @@ class gronsfeld:
         return ''.join(codded_list)
 
 
+class plmi:
+    needs_data = True
+    data_prompt = 'What is the password and sequenced seperated by ",": '
+
+    def data_valid(data):
+        return str.isascii(data) and len(data) > 2 and data.count(',') == 1
+
+    def crack(string):
+        return 'This method is incompatible with cracking'
+
+    def enc(string):
+        global term
+        if term:
+            phrase, sequence = input(plmi.data_prompt).strip().split(',')
+        else:
+            global extra_data
+            phrase, sequence = extra_data.strip().split(',')
+        point = 0
+        phrase_letter = 0
+        encrypted_message = []
+        for char in string:
+            match sequence[point]:
+                case "+":
+                    encrypted_message.append(chr(
+                        (ord(char) + ord(phrase[phrase_letter])) % 257))
+
+                case "-":
+                    encrypted_message.append(chr(
+                        (ord(char) - ord(phrase[phrase_letter]) + 256) % 257))
+            point = (point + 1) % len(sequence)
+            phrase_letter = (phrase_letter + 1) % len(phrase)
+        return "".join(encrypted_message)
+
+    def dec(string):
+        global term
+        if term:
+            phrase, sequence = input(plmi.data_prompt).strip().split(',')
+        else:
+            global extra_data
+            phrase, sequence = extra_data.strip().split(',')
+        point = 0
+        phrase_letter = 0
+        encrypted_message = []
+        for char in string:
+            match sequence[point]:
+                case "-":
+                    encrypted_message.append(chr(
+                        (ord(char) + ord(phrase[phrase_letter]) + 1) % 257))
+
+                case "+":
+                    encrypted_message.append(chr(
+                        (ord(char) - ord(phrase[phrase_letter]) + 257) % 257))
+            point = (point + 1) % len(sequence)
+            phrase_letter = (phrase_letter + 1) % len(phrase)
+        return "".join(encrypted_message)
+
+
 class General:
     cyphs = {
         'binary': binary, 'morse': morse, 'ceaser': ceaser,
         'hex': hexi_decimal, 'ascii': ascii_id, 'phonetic': phonetic,
         'base-x': base_x, 'tap': tap, 'basic-keyed': BasicKeyed,
-        'vigenere': vigenere, 'gronsfeld': gronsfeld
+        'vigenere': vigenere, 'gronsfeld': gronsfeld, 'plus-minus': plmi
         # add more here all strings must be full lower case
     }
     list_of_methods = '\n'.join([
         'Binary', 'Morse', 'Ceaser', 'Hex', 'Ascii', 'Phonetic', 'Base-X',
-        'Tap', 'Basic-Keyed', 'Vigenere', 'Gronsfeld'
-        # add more here formating doesn't matter
+        'Tap', 'Basic-Keyed', 'Vigenere', 'Gronsfeld', 'Plus-Minus'
+        # add more here must use "-" instead of " "
     ])
     eng = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
