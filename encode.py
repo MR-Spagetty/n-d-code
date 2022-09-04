@@ -29,6 +29,104 @@ class RailFence(CodingMethod):
     needs_data = True
     data_prompt = 'How many rails would you like to encode/decode with: '
 
+    def data_valid(data) -> bool:
+        return str.isdecimal(data)
+
+    def get_num_rails() -> int:
+        num_rails = input(RailFence.data_prompt)
+        while valid := not RailFence.data_valid(num_rails):
+            if not valid:
+                print(
+                    "That is not a valid number of rails, "
+                    "valid numbers are positive intigers."
+                    )
+                num_rails = input(RailFence.data_prompt)
+        return num_rails
+
+    def enc(string: str) -> str:
+        global term
+        if term:
+            num_rails = int(RailFence.get_num_rails())
+        else:
+            global extra_data
+            num_rails = int(extra_data)
+        rails = []
+        for i in range(num_rails):
+            rails.append([])
+        num_rails -= 1
+        on_rail = 0
+        for char in string:
+            if on_rail == 0:
+                going_up = False
+            elif on_rail == num_rails:
+                going_up = True
+            rails[on_rail].append(char)
+            if going_up:
+                on_rail -= 1
+            else:
+                on_rail += 1
+        print(rails)
+        output_list = []
+        for rail in rails:
+            output_list += rail
+        return "".join(output_list)
+
+    def dec(string: str) -> str:
+        global term
+        if term:
+            num_rails = int(RailFence.get_num_rails())
+        else:
+            global extra_data
+            num_rails = int(extra_data)
+
+        length = len(string)
+        cycle = 2 * num_rails - 2
+        units = length // cycle
+
+        # calculating the lengths of all teh rails
+        rail_lengths = [0] * num_rails
+        rail_lengths[0] = units
+        for i in range(1, num_rails-1):
+            rail_lengths[i] = 2 * units
+        rail_lengths[-1] = units
+        # getting the extra length of each rail that is not in full units
+        for i in range(length % cycle):
+            if i < num_rails:
+                rail_lengths[i] += 1
+            else:
+                rail_lengths[cycle-i-1] += 1
+
+        rails = [] * num_rails
+        # populating teh rails with the characters that should be on them
+        rails[0] = list(string[:rail_lengths[0]])
+        for rail_id in range(1, num_rails-1):
+            start = rail_lengths[rail_id-1]
+            stop = start + rail_lengths[rail_id]
+            rails[rail_id] = list(string[start:stop])
+        rails[-1] = list(string[sum(rail_lengths[:-1]):])
+
+        output = []
+
+        # decoding rails to plaintext
+        # decoding each unit
+        for unit in range(units):
+            for char_id in range(cycle):
+                _, rail = divmod(char_id, num_rails)
+                if char_id >= num_rails:
+                    rail = num_rails - rail - 2
+                if rail == 0 or rail == (num_rails - 1):
+                    output.append(rails[rail].pop(0))
+                else:
+                    output.append(rails[rail].pop(0))
+        # decoding
+        for char_id in range(length - len(output)):
+            _, rail = divmod(char_id, num_rails)
+            if rail == 0 or rail == (num_rails - 1):
+                output.append(rails[rail].pop(0))
+            else:
+                output.append(rails[rail].pop(0))
+        return "".join(output)
+
 
 class Tap(CodingMethod):
     matrix = {
@@ -526,7 +624,7 @@ class Gronsfeld(CodingMethod):
     ]
 
     def data_valid(data):
-        return str.isnumeric(data)
+        return str.isdecimal(data)
 
     def enc(string):
         string_list = list(string.lower())
@@ -658,12 +756,14 @@ class General:
         'binary': Binary, 'morse': Morse, 'ceaser': Ceaser,
         'hex': HexiDecimal, 'ascii': AsciiID, 'phonetic': Phonetic,
         'base-x': BaseX, 'tap': Tap, 'basic-keyed': BasicKeyed,
-        'vigenere': Vigenere, 'gronsfeld': Gronsfeld, 'plus-minus': PlMi
+        'vigenere': Vigenere, 'gronsfeld': Gronsfeld, 'plus-minus': PlMi,
+        'rail-fence': RailFence
         # add more here all strings must be full lower case
     }
     list_of_methods = '\n'.join([
         'Binary', 'Morse', 'Ceaser', 'Hex', 'Ascii', 'Phonetic', 'Base-X',
-        'Tap', 'Basic-Keyed', 'Vigenere', 'Gronsfeld', 'Plus-Minus'
+        'Tap', 'Basic-Keyed', 'Vigenere', 'Gronsfeld', 'Plus-Minus',
+        "Rail-Fence"
         # add more here must use "-" instead of " "
     ])
     eng = [
