@@ -96,7 +96,9 @@ class RailFence(CodingMethod):
             else:
                 rail_lengths[cycle-i-1] += 1
 
-        rails = [] * num_rails
+        rails = []
+        for i in range(num_rails):
+            rails.append([])
         # populating teh rails with the characters that should be on them
         rails[0] = list(string[:rail_lengths[0]])
         for rail_id in range(1, num_rails-1):
