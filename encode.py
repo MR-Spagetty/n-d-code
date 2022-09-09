@@ -25,6 +25,34 @@ class CodingMethod(Protocol):
         pass
 
 
+class UBacon(CodingMethod):
+    alphabet = [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y'
+    ]
+
+    def enc(string: str) -> str:
+        lc = []
+        for char in string:
+            if char in UBacon.alphabet:
+                coded_char = bin(
+                        UBacon.alphabet.index(char)
+                        )[2:].replace('1', 'b').replace('0', 'a')
+                while len(coded_char) < 5:
+                    coded_char = f'a{coded_char}'
+                lc.append(
+                    coded_char
+                    )
+        return " ".join(lc)
+
+    def dec(string: str) -> str:
+        lc = []
+        for char in string.split():
+            if str.isdecimal(char):
+                lc.append(UBacon.alphabet[int(char, 2)])
+        return "".join(lc)
+
+
 class RailFence(CodingMethod):
     needs_data = True
     data_prompt = 'How many rails would you like to encode/decode with: '
@@ -759,13 +787,13 @@ class General:
         'hex': HexiDecimal, 'ascii': AsciiID, 'phonetic': Phonetic,
         'base-x': BaseX, 'tap': Tap, 'basic-keyed': BasicKeyed,
         'vigenere': Vigenere, 'gronsfeld': Gronsfeld, 'plus-minus': PlMi,
-        'rail-fence': RailFence
+        'rail-fence': RailFence, 'bacon': UBacon
         # add more here all strings must be full lower case
     }
     list_of_methods = '\n'.join([
         'Binary', 'Morse', 'Ceaser', 'Hex', 'Ascii', 'Phonetic', 'Base-X',
         'Tap', 'Basic-Keyed', 'Vigenere', 'Gronsfeld', 'Plus-Minus',
-        "Rail-Fence"
+        "Rail-Fence", "Bacon"
         # add more here must use "-" instead of " "
     ])
     eng = [
